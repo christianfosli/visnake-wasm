@@ -1,9 +1,8 @@
 namespace HighScoreApi
 
 open System
-open Dapper
+open FSharp.Data
 open FSharp.Data.LiteralProviders
-open Microsoft.Data.SqlClient
 open Microsoft.Azure.WebJobs
 open Microsoft.Extensions.Logging
 
@@ -15,8 +14,7 @@ module DbCleanup =
     let Schedule =
         Env<"CRON_CLEANUP_SCHEDULE", "0 0 0 * * SUN">.Value
 
-    let removeNonTopHighScores connString =
-        use conn = new SqlConnection(connString)
+    let removeNonTopHighScores = new SqlCommandProvider()
         conn.Execute "with ToDelete as (
                 select * from [highscores]
                 order by [Score] desc, [TimeStamp] asc

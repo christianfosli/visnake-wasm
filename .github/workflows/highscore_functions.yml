@@ -21,10 +21,17 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
+      - name: Spin up DB
+        run: |
+          docker-compose up -d db
+          printf 'wait for entrypoint script to run...\n' && sleep 5s
+          docker-compose logs
       - name: Run dotnet build
         run: |
           cd highscore-api/HighScoreApi
           dotnet build
+        env:
+          CONNECTION_STRING: "Server=tcp:localhost;Database=snake-hs;User ID=sa;Password=Secret_01"
       - name: Run dotnet test
         run: |
           cd highscore-api/HighScoreApi.Tests
@@ -37,10 +44,17 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
+      - name: Spin up DB
+        run: |
+          docker-compose up -d db
+          printf 'wait for entrypoint script to run...\n' && sleep 5s
+          docker-compose logs
       - name: Run dotnet build
         run: |
           cd highscore-api/HighScoreApi
           dotnet build --configuration Release --output ./output
+        env:
+          CONNECTION_STRING: "Server=tcp:localhost;Database=snake-hs;User ID=sa;Password=Secret_01"
       - name: Run dotnet test
         run: |
           cd highscore-api/HighScoreApi.Tests

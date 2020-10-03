@@ -26,23 +26,6 @@ module Types =
 
 module DbUtils =
     open Types
-    open Dapper
-    open Microsoft.Data.SqlClient
 
     let connString =
         Environment.GetEnvironmentVariable "CONNECTION_STRING"
-
-    type SqlScoreHandler() =
-        inherit SqlMapper.TypeHandler<Score>()
-
-        override __.SetValue(param, value) = param.Value <- value |> Score.value
-
-        override __.Parse value =
-            let value = value :?> int
-            match value |> Score.create with
-            | Ok score -> score
-            | Error e -> sprintf "Error parsing to Score: %A" e |> failwith
-
-    let dbConnection connString =
-        SqlMapper.AddTypeHandler(SqlScoreHandler())
-        new SqlConnection(connString)
